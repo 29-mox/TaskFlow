@@ -1,0 +1,15 @@
+# Secrets (TRÈS IMPORTANT)
+.env
+
+# Docker & Données
+db_data/
+
+# Dépendances potentielles
+vendor/
+node_modules/
+
+# IDE & Système
+.vscode/
+.idea/
+.DS_Store
+*.log

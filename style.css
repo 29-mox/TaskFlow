@@ -31,6 +31,7 @@ header p { color: #6b7280; font-size: 0.9rem; margin-top: 0.2rem; }
 
 .input-section {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin: 1.5rem 0;
 }
@@ -42,6 +43,11 @@ input {
     border-radius: 0.5rem;
     outline: none;
     font-size: 1rem;
+}
+
+input[type="datetime-local"] {
+    flex: 0;
+    min-width: 150px;
 }
 
 input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
@@ -121,7 +127,19 @@ ul { list-style: none; padding: 0; }
     color: #9ca3af;
 }
 
-.task-item span { cursor: pointer; flex: 1; transition: color 0.2s; }
+.task-content {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    flex: 1;
+    transition: color 0.2s;
+}
+
+.task-due {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.2rem;
+}
 
 .delete-btn {
     background: #fee2e2;
