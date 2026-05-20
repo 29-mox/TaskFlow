@@ -34,12 +34,6 @@
             <button id="add-btn">Ajouter</button>
         </div>
 
-        <div class="filter-bar">
-            <button class="filter-btn active" data-filter="all">Toutes</button>
-            <button class="filter-btn" data-filter="active">En cours</button>
-            <button class="filter-btn" data-filter="completed">Terminées</button>
-        </div>
-
         <div class="sort-bar">
             <span>Trier par :</span>
             <button class="sort-btn active" data-sort="created">Création</button>

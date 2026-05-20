@@ -6,11 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progress-bar');
     const addBtn = document.getElementById('add-btn');
     const taskList = document.getElementById('task-list');
-    const filterBtns = document.querySelectorAll('.filter-btn');
     const sortBtns = document.querySelectorAll('.sort-btn');
 
     let allTasks = [];
-    let currentFilter = 'all';
     let currentSort = 'created';
     let editingId = null;
 
@@ -72,15 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderTasks = () => {
-        const filtered = allTasks.filter(task => {
-            if (currentFilter === 'active') return !task.is_completed;
-            if (currentFilter === 'completed') return task.is_completed;
-            return true;
-        });
-
         // Calculer si une tâche est imminente (moins d'une heure avant l'échéance)
         const now = new Date();
-        const processedTasks = filtered.map(task => {
+        const processedTasks = allTasks.map(task => {
             const t = { ...task };
             if (t.due_at && !t.is_completed) {
                 const dueDate = new Date(t.due_at);
