@@ -34,12 +34,6 @@
             <button id="add-btn">Ajouter</button>
         </div>
 
-        <div class="sort-bar">
-            <span>Trier par :</span>
-            <button class="sort-btn active" data-sort="created">Création</button>
-            <button class="sort-btn" data-sort="due">Échéance</button>
-        </div>
-
         <ul id="task-list"></ul>
     </div>
 

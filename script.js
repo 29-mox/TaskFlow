@@ -6,10 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = document.getElementById('progress-bar');
     const addBtn = document.getElementById('add-btn');
     const taskList = document.getElementById('task-list');
-    const sortBtns = document.querySelectorAll('.sort-btn');
 
     let allTasks = [];
-    let currentSort = 'created';
     let editingId = null;
 
     // Gestion de l'affichage de l'aide
@@ -95,19 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressBar) {
             progressBar.style.width = `${progressPercentage}%`;
         }
-
-        // Logique de tri
-        processedTasks.sort((a, b) => {
-            if (currentSort === 'due') {
-                // Les tâches sans date vont à la fin
-                if (!a.due_at) return 1;
-                if (!b.due_at) return -1;
-                return new Date(a.due_at) - new Date(b.due_at);
-            } else {
-                // Tri par date de création (décroissant par défaut)
-                return new Date(b.created_at) - new Date(a.created_at);
-            }
-        });
 
         if (processedTasks.length === 0) {
             taskList.innerHTML = `<li class="empty-state">Aucune tâche trouvée...</li>`;
