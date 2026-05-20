@@ -34,6 +34,14 @@
             <button id="add-btn">Ajouter</button>
         </div>
 
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Rechercher une tâche..." autocomplete="off">
+        </div>
+
+        <div style="text-align: right; margin-bottom: 1rem;">
+            <button type="button" id="clear-completed-btn" class="delete-btn danger">🗑️ Vider les terminées</button>
+        </div>
+
         <ul id="task-list"></ul>
     </div>
 

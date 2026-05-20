@@ -3,11 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateInput = document.getElementById('task-date');
     const helpBtn = document.getElementById('help-btn');
     const helpBox = document.getElementById('help-box');
+    const searchInput = document.getElementById('search-input');
     const progressBar = document.getElementById('progress-bar');
     const addBtn = document.getElementById('add-btn');
+    const clearCompletedBtn = document.getElementById('clear-completed-btn');
     const taskList = document.getElementById('task-list');
 
     let allTasks = [];
+    let currentSearchTerm = '';
     let editingId = null;
 
     // Gestion de l'affichage de l'aide
@@ -68,9 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderTasks = () => {
+        // Filtrer les tâches par terme de recherche
+        const searchedTasks = allTasks.filter(task =>
+            task.task_text.toLowerCase().includes(currentSearchTerm.toLowerCase())
+        );
+
         // Calculer si une tâche est imminente (moins d'une heure avant l'échéance)
         const now = new Date();
-        const processedTasks = allTasks.map(task => {
+        const processedTasks = searchedTasks.map(task => {
             const t = { ...task };
             if (t.due_at && !t.is_completed) {
                 const dueDate = new Date(t.due_at);
@@ -222,6 +230,31 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     input.onkeypress = (e) => { if (e.key === 'Enter') addBtn.click(); };
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            currentSearchTerm = e.target.value;
+            renderTasks();
+        });
+    }
+
+    if (clearCompletedBtn) {
+        clearCompletedBtn.addEventListener('click', async () => {
+            if (!confirm('Voulez-vous supprimer toutes les tâches terminées ?')) return;
+            
+            const res = await fetch('api.php?action=clear_completed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (res.ok) {
+                showToast("Tâches terminées supprimées !");
+                fetchTasks();
+            } else {
+                showToast("❌ Erreur lors de la suppression", "error");
+            }
+        });
+    }
 
     fetchTasks();
 });

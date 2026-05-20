@@ -55,6 +55,12 @@ try {
             echo json_encode(['success' => true]);
             break;
 
+        case 'clear_completed':
+            $stmt = $pdo->prepare("DELETE FROM tasks WHERE is_completed = 1");
+            $stmt->execute();
+            echo json_encode(['success' => true]);
+            break;
+
         default:
             http_response_code(404);
             echo json_encode(['error' => 'Action non reconnue']);
