@@ -9,21 +9,28 @@
 
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background-color: var(--bg);
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    background-attachment: fixed;
+    background-size: 100% 200%;
     color: var(--text);
     display: flex;
     justify-content: center;
-    padding-top: 4rem;
+    align-items: center;
+    min-height: 100vh;
     margin: 0;
+    padding: 1rem
 }
 
 .app-card {
-    background: var(--card);
+    background: rgba(255, 255, 255, 0.2); /* Make the card slightly transparent */
     width: 100%;
     max-width: 420px;
     padding: 2rem;
     border-radius: 1rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* More pronounced shadow */
+    backdrop-filter: blur(10px); /* Blur effect */
+    transition: opacity 0.2s ease-in-out;
 }
 
 h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
@@ -32,6 +39,12 @@ h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Defines the exact space between buttons */
 }
 
 #help-btn {
@@ -47,6 +60,32 @@ h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
 }
 
 #help-btn:hover { background: #c7d2fe; }
+
+#lang-toggle-btn {
+    background: #e0e7ff;
+    color: var(--primary);
+    border: none;
+    padding: 0 10px;
+    height: 28px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#lang-toggle-btn:hover {
+    background: #c7d2fe;
+}
+
+.flag-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
+}
 
 .help-box {
     display: none;
@@ -68,6 +107,10 @@ h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-out {
+    opacity: 0;
 }
 
 /* Progress Bar */
@@ -292,5 +335,5 @@ ul { list-style: none; padding: 0; }
 
 .task-text.overdue {
     color: var(--danger);
-    font-weight: 600; /* Pour accentuer l'urgence */
+    font-weight: 600; /* To emphasize urgency */
 }

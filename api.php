@@ -22,7 +22,7 @@ try {
                 echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Le texte de la tâche est requis']);
+                echo json_encode(['error' => 'error_task_required']);
             }
             break;
 
@@ -37,13 +37,13 @@ try {
                 echo json_encode(['success' => true]);
             } else {
                 http_response_code(400);
-                echo json_encode(['error' => 'Données invalides']);
+                echo json_encode(['error' => 'error_invalid_data']);
             }
             break;
 
         case 'toggle':
             $id = (int)($input['id'] ?? 0);
-            $stmt = $pdo->prepare("UPDATE tasks SET is_completed = NOT is_completed WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE tasks SET is_completed = IF(is_completed = 1, 0, 1) WHERE id = ?");
             $stmt->execute([$id]);
             echo json_encode(['success' => true]);
             break;
@@ -55,15 +55,9 @@ try {
             echo json_encode(['success' => true]);
             break;
 
-        case 'clear_completed':
-            $stmt = $pdo->prepare("DELETE FROM tasks WHERE is_completed = 1");
-            $stmt->execute();
-            echo json_encode(['success' => true]);
-            break;
-
         default:
             http_response_code(404);
-            echo json_encode(['error' => 'Action non reconnue']);
+            echo json_encode(['error' => 'error_unknown_action']);
             break;
     }
 } catch (Exception $e) {

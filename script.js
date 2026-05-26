@@ -2,32 +2,146 @@ document.addEventListener('DOMContentLoaded', () => {
     const input = document.getElementById('task-input');
     const dateInput = document.getElementById('task-date');
     const helpBtn = document.getElementById('help-btn');
+    const langToggleBtn = document.getElementById('lang-toggle-btn'); // New language button
     const helpBox = document.getElementById('help-box');
     const searchInput = document.getElementById('search-input');
     const progressBar = document.getElementById('progress-bar');
     const addBtn = document.getElementById('add-btn');
-    const clearCompletedBtn = document.getElementById('clear-completed-btn');
     const taskList = document.getElementById('task-list');
+    const appCard = document.querySelector('.app-card');
+
+    const translations = {
+        fr: {
+            appTitle: "🚀 TaskFlow",
+            appSubtitle: "Simplifiez votre productivité",
+            helpTitle: "📝 Comment ajouter une tâche :",
+            helpStep1: "Saisissez l'intitulé de votre tâche dans le premier champ.",
+            helpStep2: "Cliquez sur \"Date d'échéance\" pour définir un rappel (optionnel).",
+            helpStep3: "Appuyez sur \"Ajouter\" ou sur la touche Entrée.",
+            helpTooltip: "Besoin d'aide ?",
+            inputPlaceholder: "Ajouter une tâche...",
+            datePlaceholder: "Date d'échéance",
+            addButton: "Ajouter",
+            searchPlaceholder: "Rechercher une tâche...",
+            emptyState: "Aucune tâche trouvée...",
+            serverError: "Erreur de connexion au serveur",
+            save: "Enregistrer",
+            cancel: "Annuler",
+            imminent: "Échéance proche !",
+            edit: "Modifier",
+            delete: "Supprimer",
+            emptyText: "Le texte ne peut pas être vide",
+            taskUpdated: "Tâche mise à jour !",
+            updateError: "Erreur lors de la mise à jour",
+            confirmDelete: "Supprimer cette tâche ?",
+            taskAdded: "🚀 Tâche ajoutée avec succès !",
+            addError: "❌ Erreur lors de l'ajout",
+            toggleLangButton: 'EN <span class="flag-icon">🇬🇧</span>',
+            error_task_required: "Le texte de la tâche est requis",
+            error_invalid_data: "Données invalides",
+            error_unknown_action: "Action non reconnue"
+        },
+        en: {
+            appTitle: "🚀 TaskFlow",
+            appSubtitle: "Simplify your productivity",
+            helpTitle: "📝 How to add a task:",
+            helpStep1: "Enter your task description in the first field.",
+            helpStep2: "Click \"Due Date\" to set a reminder (optional).",
+            helpStep3: "Press \"Add\" or the Enter key.",
+            helpTooltip: "Need help?",
+            inputPlaceholder: "Add a task...",
+            datePlaceholder: "Due date",
+            addButton: "Add",
+            searchPlaceholder: "Search for a task...",
+            emptyState: "No tasks found...",
+            serverError: "Server connection error",
+            save: "Save",
+            cancel: "Cancel",
+            imminent: "Deadline approaching!",
+            edit: "Edit",
+            delete: "Delete",
+            emptyText: "Text cannot be empty",
+            taskUpdated: "Task updated!",
+            updateError: "Error during update",
+            confirmDelete: "Delete this task?",
+            taskAdded: "🚀 Task added successfully!",
+            addError: "❌ Error during addition",
+            toggleLangButton: 'FR <span class="flag-icon">🇫🇷</span>',
+            error_task_required: "Task text is required",
+            error_invalid_data: "Invalid data",
+            error_unknown_action: "Unknown action"
+        }
+    };
+    let currentLang = localStorage.getItem('lang') || 'fr';
+    const t = (key) => translations[currentLang][key] || key;
+
+    // Function to update the language button text
+    const updateLangToggleButton = () => {
+        if (langToggleBtn) {
+            langToggleBtn.innerHTML = t('toggleLangButton');
+        }
+    };
+
+    // Function to apply all static interface translations
+    const applyTranslations = () => {
+        const textElements = {
+            'app-title': 'appTitle',
+            'app-subtitle': 'appSubtitle',
+            'help-title': 'helpTitle',
+            'help-step-1': 'helpStep1',
+            'help-step-2': 'helpStep2',
+            'help-step-3': 'helpStep3',
+            'add-btn': 'addButton'
+        };
+        for (const [id, key] of Object.entries(textElements)) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = t(key);
+        }
+
+        const placeholders = {
+            'task-input': 'inputPlaceholder',
+            'task-date': 'datePlaceholder',
+            'search-input': 'searchPlaceholder'
+        };
+        for (const [id, key] of Object.entries(placeholders)) {
+            const el = document.getElementById(id);
+            if (el) el.placeholder = t(key);
+        }
+
+        if (helpBtn) helpBtn.title = t('helpTooltip');
+    };
+
+    window.toggleLanguage = () => {
+        if (appCard) appCard.classList.add('fade-out');
+
+        setTimeout(() => {
+            currentLang = currentLang === 'fr' ? 'en' : 'fr';
+            localStorage.setItem('lang', currentLang);
+            updateLangToggleButton();
+            applyTranslations();
+            renderTasks();
+            if (appCard) appCard.classList.remove('fade-out');
+        }, 200); // Durée synchronisée avec la transition CSS
+    };
+
 
     let allTasks = [];
     let currentSearchTerm = '';
     let editingId = null;
-
-    // Gestion de l'affichage de l'aide
+    
+    // Help display management
     if (helpBtn && helpBox) {
         helpBtn.addEventListener('click', () => {
             helpBox.classList.toggle('active');
         });
     }
 
-    // Fermer la boîte d'aide si l'on clique en dehors
+    // Close the help box if clicked outside
     document.addEventListener('click', (event) => {
-        // Vérifie si le clic n'est ni sur le bouton d'aide, ni à l'intérieur de la boîte d'aide
+        // Checks if the click is neither on the help button nor inside the help box
         if (helpBox && helpBtn && !helpBox.contains(event.target) && !helpBtn.contains(event.target)) {
-            // Si la boîte d'aide est ouverte, on la ferme
-            if (helpBox.classList.contains('active')) {
-                helpBox.classList.remove('active');
-            }
+            // If the help box is open, close it
+            if (helpBox.classList.contains('active')) helpBox.classList.remove('active');
         }
     });
 
@@ -37,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toast.textContent = message;
         document.body.appendChild(toast);
 
-        // Suppression automatique après 3 secondes
+        // Automatic removal after 3 seconds
         setTimeout(() => {
             toast.classList.add('hide');
             toast.addEventListener('animationend', () => {
@@ -48,14 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchTasks = async () => {
         try {
-            const res = await fetch('api.php?action=list');
+            // Add a timestamp parameter to avoid browser caching
+            const res = await fetch(`api.php?action=list&_=${Date.now()}`);
             const data = await res.json();
             
             if (data.error) {
                 throw new Error(data.error);
             }
 
-            // Conversion sécurisée des types
+            // Secure type conversion
             allTasks = Array.isArray(data) ? data.map(t => ({
                 ...t,
                 id: Number(t.id),
@@ -65,28 +180,28 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Erreur lors du chargement :", error);
             taskList.innerHTML = `<li class="empty-state" style="color: var(--danger)">
-                ⚠️ ${error.message || "Erreur de connexion au serveur"}
+                ⚠️ ${t(error.message) || t('serverError')}
             </li>`;
         }
     };
 
     const renderTasks = () => {
-        // Filtrer les tâches par terme de recherche
+        // Filter tasks by search term
         const searchedTasks = allTasks.filter(task =>
             task.task_text.toLowerCase().includes(currentSearchTerm.toLowerCase())
         );
 
-        // Calculer si une tâche est imminente (moins d'une heure avant l'échéance)
+        // Calculate if a task is imminent (less than an hour before deadline)
         const now = new Date();
         const processedTasks = searchedTasks.map(task => {
             const t = { ...task };
             if (t.due_at && !t.is_completed) {
                 const dueDate = new Date(t.due_at);
-                const timeDiff = dueDate.getTime() - now.getTime(); // Différence en millisecondes
-                if (timeDiff > 0 && timeDiff <= 3600000) { // Si dans le futur et moins d'une heure
+                const timeDiff = dueDate.getTime() - now.getTime(); // Difference in milliseconds
+                if (timeDiff > 0 && timeDiff <= 3600000) { // If in the future and less than an hour
                     t.is_imminent = true;
                 }
-                // Vérifier si la date est dépassée (et la tâche n'est pas complétée)
+                // Check if the date is overdue (and the task is not completed)
                 if (timeDiff < 0) {
                     t.is_overdue = true;
                 }
@@ -94,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return t;
         });
 
-        // Mettre à jour la barre de progression
+        // Update the progress bar
         const totalTasks = allTasks.length;
         const completedTasks = allTasks.filter(task => task.is_completed).length;
         const progressPercentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
@@ -103,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (processedTasks.length === 0) {
-            taskList.innerHTML = `<li class="empty-state">Aucune tâche trouvée...</li>`;
+            taskList.innerHTML = `<li class="empty-state">${t('emptyState')}</li>`;
             return;
         }
 
@@ -115,21 +230,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         <input type="datetime-local" id="edit-date-${task.id}" value="${task.due_at ? task.due_at.replace(' ', 'T') : ''}">
                     </div>
                     <div class="btn-group">
-                        <button class="delete-btn" onclick="saveEdit(${task.id})" title="Enregistrer">💾</button>
-                        <button class="delete-btn" onclick="cancelEdit()" title="Annuler">❌</button>
+                        <button class="delete-btn" onclick="saveEdit(${task.id})" title="${t('save')}">💾</button>
+                        <button class="delete-btn" onclick="cancelEdit()" title="${t('cancel')}">❌</button>
                     </div>
                 ` : `
                     <div class="task-content" onclick="toggleTask(${task.id})">
-                        ${task.is_imminent ? `<span class="imminent-icon" title="Échéance proche !">⚠️</span>` : ''}
+                        ${task.is_imminent ? `<span class="imminent-icon" title="${t('imminent')}">⚠️</span>` : ''}
                         <span class="task-text ${task.is_overdue ? 'overdue' : ''}">${task.task_text}</span>
                         ${task.due_at ? `
                             <small class="task-due">
-                                📅 ${new Date(task.due_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
+                                📅 ${new Date(task.due_at).toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US', { dateStyle: 'short', timeStyle: 'short' })}
                             </small>` : ''}
                     </div>
                     <div class="btn-group">
-                        <button class="delete-btn" onclick="startEdit(${task.id})" title="Modifier">✏️</button>
-                        <button class="delete-btn danger" onclick="deleteTask(${task.id})" title="Supprimer">🗑️</button>
+                        <button class="delete-btn" onclick="startEdit(${task.id})" title="${t('edit')}">✏️</button>
+                        <button class="delete-btn danger" onclick="deleteTask(${task.id})" title="${t('delete')}">🗑️</button>
                     </div>
                 `}
             </li>
@@ -151,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newDate = document.getElementById(`edit-date-${id}`).value;
 
         if (!newText) {
-            showToast("Le texte ne peut pas être vide", "error");
+            showToast(t('emptyText'), "error");
             return;
         }
 
@@ -163,38 +278,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (res.ok) {
             editingId = null;
-            showToast("Tâche mise à jour !");
+            showToast(t('taskUpdated'));
             fetchTasks();
         } else {
-            showToast("Erreur lors de la mise à jour", "error");
+            showToast(t('updateError'), "error");
         }
-    };
-
-    window.toggleTask = async (id) => {
-        // UI Optimiste : on change visuellement tout de suite
-        const task = allTasks.find(t => t.id === Number(id));
-        if (task) {
-            task.is_completed = !task.is_completed;
-            renderTasks();
-        }
-
-        const res = await fetch('api.php?action=toggle', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-        });
-
-        if (!res.ok) fetchTasks(); // En cas d'erreur serveur, on recharge la vraie liste
     };
 
     window.deleteTask = async (id) => {
-        if (!confirm('Supprimer cette tâche ?')) return;
+        if (!confirm(t('confirmDelete'))) return;
 
         const element = document.getElementById(`task-${id}`);
         if (element) {
             element.classList.add('removing');
             
-            // On attend la fin de l'animation CSS (300ms) avant de supprimer en BDD
+            // Wait for the CSS animation to finish (300ms) before deleting from DB
             setTimeout(async () => {
                 const res = await fetch('api.php?action=delete', {
                     method: 'POST',
@@ -222,10 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateInput.value = '';
                 dateInput.type = 'text';
             }
-            showToast("🚀 Tâche ajoutée avec succès !");
+            showToast(t('taskAdded'));
             fetchTasks();
         } else {
-            showToast("❌ Erreur lors de l'ajout", "error");
+            showToast(t('addError'), "error");
         }
     };
 
@@ -238,23 +336,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (clearCompletedBtn) {
-        clearCompletedBtn.addEventListener('click', async () => {
-            if (!confirm('Voulez-vous supprimer toutes les tâches terminées ?')) return;
-            
-            const res = await fetch('api.php?action=clear_completed', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            
-            if (res.ok) {
-                showToast("Tâches terminées supprimées !");
-                fetchTasks();
-            } else {
-                showToast("❌ Erreur lors de la suppression", "error");
-            }
-        });
-    }
-
+    // Parallax effect on the background when scrolling
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        document.body.style.backgroundPositionY = `${-(scrolled * 0.2)}px`;
+    }); // Initialize the language button text on load
+    
+    updateLangToggleButton(); // Apply initial translations
+    applyTranslations();
     fetchTasks();
 });
