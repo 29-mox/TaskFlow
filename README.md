@@ -17,11 +17,7 @@ TaskFlow est une application web simple de gestion de tâches développée avec 
 
 ## 🚀 Démarrage Rapide avec Docker / Quick Start with Docker
 
-1. **Cloner le projet** : / **Clone the project**:
-    ```bash
-    git clone https://github.com/29-mox/TaskFlow.git
-    cd TaskFlow
-    ```
+1. **Cloner le projet** : / **Clone the project**
 2. **Lancer avec Docker** : / **Start with Docker**:
     ```bash
     docker-compose up --build -d
