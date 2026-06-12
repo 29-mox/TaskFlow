@@ -18,6 +18,9 @@ TaskFlow is a simple web-based task management application built with PHP, MySQL
 ## Quick Start with Docker
 
 1. **Clone the project**
+    ```bash
+    git clone https://github.com/29-mox/TaskFlow.git 
+    ```
 2. **Start with Docker**:
     ```bash
     docker-compose up --build -d
