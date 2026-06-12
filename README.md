@@ -23,3 +23,13 @@ TaskFlow is a simple web-based task management application built with PHP, MySQL
     docker-compose up --build -d
     ```
     URL: `http://localhost:8080`
+
+## Alternative: Setup with XAMPP
+
+1.  **Move the project**: Copy the project folder to `C:\xampp\htdocs\TaskFlow`.
+2.  **Start Services**: Open the XAMPP Control Panel and start **Apache** and **MySQL**.
+3.  **Database Setup**: 
+    - Go to `http://localhost/phpmyadmin`.
+    - Create a new database named `taskflow`.
+    - Import the provided SQL schema (if applicable) or ensure your `api.php` is configured with your database credentials.
+4.  **Access the app**: URL: `http://localhost/TaskFlow`

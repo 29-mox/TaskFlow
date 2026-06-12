@@ -15,25 +15,60 @@ body {
     color: var(--text);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; /* Centre le contenu verticalement sur l'écran */
     min-height: 100vh;
+    min-height: 100dvh; /* Utilise la hauteur dynamique pour s'adapter aux barres d'outils mobiles */
     margin: 0;
     padding: 1rem
 }
 
-.app-card {
-    background: rgba(255, 255, 255, 0.2); /* Make the card slightly transparent */
+/* Style pour le conteneur principal des formulaires d'authentification */
+#auth-container.app-card {
+    background: rgba(255, 255, 255, 0.1); /* Plus transparent pour l'effet verre */
     width: 100%;
     max-width: 420px;
+    margin: auto; /* Technique plus robuste pour le centrage vertical avec scroll possible */
     padding: 2rem;
     border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Add a subtle border */
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* More pronounced shadow */
-    backdrop-filter: blur(10px); /* Blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Bordure plus lumineuse et définie */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.45); /* Ombre portée plus profonde */
+    backdrop-filter: blur(20px); /* Flou plus prononcé */
+    -webkit-backdrop-filter: blur(20px); /* Support pour Safari */
+    transition: opacity 0.2s ease-in-out; 
+    /* margin-top et margin-bottom sont supprimés car align-items: center gère le centrage vertical */
+    padding: 25px; /* Réduit le padding interne si initialement trop grand */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ajoute une légère ombre pour un effet de carte */
+}
+
+/* Style générique pour les autres .app-card qui ne sont pas le conteneur d'authentification */
+.app-card:not(#auth-container) {
+    background: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.45);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     transition: opacity 0.2s ease-in-out;
 }
 
-h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
+@media (max-width: 480px) {
+    #auth-container.app-card {
+        padding: 1.5rem; /* Optimise l'espace intérieur sur petit écran */
+        /* margin-top et margin-bottom sont supprimés ici aussi */
+
+    }
+    .app-card:not(#auth-container) {
+        padding: 1.5rem; /* Optimise l'espace intérieur sur petit écran */
+    }
+}
+
+h1 { margin: 0; color: var(--primary); font-size: 1.8rem; text-align: center;} /* Centrer le titre */
+
+#auth-subtitle { text-align: center; margin-bottom: 20px; color: #666; font-size: 1em; } /* Centrer et réduire l'espace sous le sous-titre */
 
 .header-top {
     display: flex;
@@ -41,6 +76,10 @@ h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
     align-items: center;
 }
 
+/* Centrer le bouton de langue dans le conteneur d'authentification */
+#auth-container .header-actions.center {
+    justify-content: center;
+}
 .header-actions {
     display: flex;
     align-items: center;
@@ -131,14 +170,47 @@ h1 { margin: 0; color: var(--primary); font-size: 1.8rem; }
     transition: width 0.3s ease-in-out;
 }
 
-header p { color: #6b7280; font-size: 0.9rem; margin-top: 0.2rem; }
+/* Rend le texte du sous-titre de l'application blanc pour un meilleur contraste */
+#app-subtitle { color: white; }
+header p:not(#auth-subtitle) { color: #6b7280; font-size: 0.9rem; margin-top: 0.2rem; } /* Appliquer le style P par défaut sauf pour le sous-titre d'auth */
 
 .input-section {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin: 1.5rem 0;
+    gap: 15px; /* Espace uniforme entre les éléments du formulaire */
+    margin-bottom: 20px; /* Espace sous la section des inputs */
 }
+
+.input-section.vertical {
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input-group {
+    display: flex; /* Utilise flexbox pour aligner Nom/Prénom */
+    gap: 10px; /* Espace entre les deux champs (Nom et Prénom) */
+    width: 100%;
+}
+
+.auth-switch {
+    font-size: 0.95em; /* Ajustement de la taille de police */
+    text-align: center;
+    margin-top: 20px; /* Espace au-dessus du texte de bascule */
+    color: #555;
+}
+
+.auth-switch a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: bold;
+    transition: text-decoration 0.2s ease;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+/* Global input styling */
 
 input {
     flex: 1;
@@ -147,6 +219,14 @@ input {
     border-radius: 0.5rem;
     outline: none;
     font-size: 1rem;
+    width: 100%; /* Assure que les inputs prennent toute la largeur disponible */
+    min-width: 0;
+    box-sizing: border-box; /* Inclut padding et bordure dans la largeur/hauteur */
+}
+
+/* Specific styling for auth inputs */
+#auth-container input {
+    padding: 12px; /* Padding interne pour une meilleure ergonomie */
 }
 
 #task-date {
@@ -156,26 +236,63 @@ input {
 
 input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1); }
 
-button#add-btn {
+.password-wrapper {
+    position: relative;
+    display: flex;
+    flex: 1;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 2.5rem; /* Espace pour l'icône */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.toggle-password:hover { opacity: 1; }
+
+/* Styles pour les boutons principaux dans les formulaires d'authentification */
+.main-btn {
     background: var(--primary);
     color: white;
     border: none;
-    padding: 0.75rem 2rem;
-    width: fit-content;
-    align-self: center;
+    padding: 12px 20px; /* Padding pour les boutons */
+    width: 100%; /* Assure que le bouton prend toute la largeur */
+    /* align-self: center; est utile si le bouton est dans un flex container qui ne couvre pas toute la largeur */
     border-radius: 0.5rem;
+    font-size: 1.1em;
     cursor: pointer;
     font-weight: 600;
     transition: background 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Ajoute une légère ombre au bouton */
 }
 
 .sort-bar {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    padding: 0 0.5rem;
+}
+
+.main-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre plus prononcée au survol */
+}
+
+.main-btn { /* Moving the definition here to be clear it applies to add-btn too */
+    /* ... (rest of .main-btn styles) ... */
 }
 
 .sort-bar span {
@@ -206,8 +323,6 @@ button#add-btn {
     margin-top: 2rem;
     font-style: italic;
 }
-
-button#add-btn:hover { background: var(--primary-hover); }
 
 ul { list-style: none; padding: 0; }
 

@@ -9,10 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('add-btn');
     const taskList = document.getElementById('task-list');
     const appCard = document.querySelector('.app-card');
+    const authContainer = document.getElementById('auth-container');
+    const mainApp = document.getElementById('main-app');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
 
     const translations = {
         fr: {
-            appTitle: "🚀 TaskFlow",
+            appTitle: "TaskFlow",
             appSubtitle: "Simplifiez votre productivité",
             helpTitle: "📝 Comment ajouter une tâche :",
             helpStep1: "Saisissez l'intitulé de votre tâche dans le premier champ.",
@@ -34,15 +38,38 @@ document.addEventListener('DOMContentLoaded', () => {
             taskUpdated: "Tâche mise à jour !",
             updateError: "Erreur lors de la mise à jour",
             confirmDelete: "Supprimer cette tâche ?",
-            taskAdded: "🚀 Tâche ajoutée avec succès !",
+            taskAdded: "Tâche ajoutée avec succès !",
             addError: "❌ Erreur lors de l'ajout",
             toggleLangButton: 'EN <span class="flag-icon">🇬🇧</span>',
             error_task_required: "Le texte de la tâche est requis",
             error_invalid_data: "Données invalides",
-            error_unknown_action: "Action non reconnue"
+            error_unknown_action: "Action non reconnue",
+            authTitle: "🚀 TaskFlow",
+            authSubtitle: "Veuillez vous identifier",
+            loginUsername: "Pseudo ou Email",
+            loginPassword: "Mot de passe",
+            loginSubmit: "Se connecter",
+            registerSubmit: "Créer un compte",
+            regLastname: "Nom",
+            regFirstname: "Prénom",
+            regUsername: "Pseudo",
+            regEmail: "Adresse email",
+            regPassword: "Mot de passe",
+            regConfirm: "Confirmation",
+            'noAccount': 'Pas encore de compte ?', // New translation for registration form
+            'error_all_fields_required': 'Tous les champs sont requis.',
+            'error_invalid_email': 'Veuillez entrer une adresse email valide.',
+            'error_weak_password': 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.',
+            'error_passwords_mismatch': 'Les mots de passe ne correspondent pas.',
+            'error_username_password_required': 'Le pseudo/email et le mot de passe sont requis.',
+            'error_registration_failed': 'Échec de l\'inscription. Veuillez réessayer.',
+            'error_login_failed': 'Échec de la connexion. Veuillez réessayer.',
+            alreadyAccount: "Déjà un compte ?",
+            switchRegister: "S'inscrire",
+            switchLogin: "Se connecter"
         },
         en: {
-            appTitle: "🚀 TaskFlow",
+            appTitle: "TaskFlow",
             appSubtitle: "Simplify your productivity",
             helpTitle: "📝 How to add a task:",
             helpStep1: "Enter your task description in the first field.",
@@ -64,12 +91,35 @@ document.addEventListener('DOMContentLoaded', () => {
             taskUpdated: "Task updated!",
             updateError: "Error during update",
             confirmDelete: "Delete this task?",
-            taskAdded: "🚀 Task added successfully!",
+            taskAdded: "Task added successfully!",
             addError: "❌ Error during addition",
             toggleLangButton: 'FR <span class="flag-icon">🇫🇷</span>',
             error_task_required: "Task text is required",
             error_invalid_data: "Invalid data",
-            error_unknown_action: "Unknown action"
+            error_unknown_action: "Unknown action",
+            authTitle: "🚀 TaskFlow",
+            authSubtitle: "Please identify yourself",
+            loginUsername: "Username or Email",
+            loginPassword: "Password",
+            loginSubmit: "Login",
+            registerSubmit: "Create Account",
+            regLastname: "Last name",
+            regFirstname: "First name",
+            regUsername: "Username",
+            regEmail: "Email",
+            regPassword: "Password",
+            regConfirm: "Confirm",
+            'noAccount': "Don't have an account?", // New translation for registration form
+            'error_all_fields_required': 'All fields are required.',
+            'error_invalid_email': 'Please enter a valid email address.',
+            'error_weak_password': 'Password must be at least 8 characters long, include an uppercase letter, a lowercase letter, a number, and a special character.',
+            'error_passwords_mismatch': 'Passwords do not match.',
+            'error_username_password_required': 'Username/Email and password are required.',
+            'error_registration_failed': 'Registration failed. Please try again.',
+            'error_login_failed': 'Login failed. Please try again.',
+            alreadyAccount: "Already have an account?",
+            switchRegister: "Register",
+            switchLogin: "Login"
         }
     };
     let currentLang = localStorage.getItem('lang') || 'fr';
@@ -80,6 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (langToggleBtn) {
             langToggleBtn.innerHTML = t('toggleLangButton');
         }
+        const authLangBtn = document.getElementById('auth-lang-toggle');
+        if (authLangBtn) authLangBtn.innerHTML = t('toggleLangButton');
     };
 
     // Function to apply all static interface translations
@@ -91,7 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
             'help-step-1': 'helpStep1',
             'help-step-2': 'helpStep2',
             'help-step-3': 'helpStep3',
-            'add-btn': 'addButton'
+            'add-btn': 'addButton',
+            'auth-title': 'authTitle',
+            'auth-subtitle': 'authSubtitle',
+            'login-submit-btn': 'loginSubmit',
+            'register-submit-btn': 'registerSubmit',
+            'no-account-text': 'noAccount',
+            'already-account-text': 'alreadyAccount'
         };
         for (const [id, key] of Object.entries(textElements)) {
             const el = document.getElementById(id);
@@ -101,7 +159,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const placeholders = {
             'task-input': 'inputPlaceholder',
             'task-date': 'datePlaceholder',
-            'search-input': 'searchPlaceholder'
+            'search-input': 'searchPlaceholder',
+            'login-username': 'loginUsername',
+            'login-password': 'loginPassword',
+            'reg-lastname': 'regLastname',
+            'reg-firstname': 'regFirstname',
+            'reg-username': 'regUsername',
+            'reg-email': 'regEmail',
+            'reg-password': 'regPassword',
+            'reg-confirm': 'regConfirm'
         };
         for (const [id, key] of Object.entries(placeholders)) {
             const el = document.getElementById(id);
@@ -109,6 +175,158 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (helpBtn) helpBtn.title = t('helpTooltip');
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) logoutBtn.title = currentLang === 'fr' ? 'Déconnexion' : 'Logout';
+    };
+
+    // --- VALIDATION FUNCTIONS ---
+    const isValidEmail = (email) => {
+        // Simple regex for email validation
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    const isStrongPassword = (password) => {
+        // Minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+        return regex.test(password);
+    };
+
+    const validateRegistrationForm = (payload) => {
+        if (!payload.lastname || !payload.firstname || !payload.username || !payload.email || !payload.password || !payload.confirm_password) {
+            showToast(t('error_all_fields_required'), "error");
+            return false;
+        }
+
+        if (!isValidEmail(payload.email)) {
+            showToast(t('error_invalid_email'), "error");
+            return false;
+        }
+
+        if (!isStrongPassword(payload.password)) {
+            showToast(t('error_weak_password'), "error");
+            return false;
+        }
+
+        if (payload.password !== payload.confirm_password) {
+            showToast(t('error_passwords_mismatch'), "error");
+            return false;
+        }
+
+        return true;
+    };
+
+    const validateLoginForm = (username, password) => {
+        if (!username || !password) {
+            showToast(t('error_username_password_required'), "error");
+            return false;
+        }
+        return true;
+    };
+
+    const initPasswordToggles = () => {
+        document.querySelectorAll('input[type="password"]').forEach(input => {
+            // Éviter de doubler le wrapper si la fonction est rappelée
+            if (input.parentElement.classList.contains('password-wrapper')) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'password-wrapper';
+            input.parentNode.insertBefore(wrapper, input);
+            wrapper.appendChild(input);
+
+            const toggleBtn = document.createElement('button');
+            toggleBtn.type = 'button';
+            toggleBtn.className = 'toggle-password';
+            toggleBtn.innerHTML = '👁️';
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                toggleBtn.innerHTML = isPassword ? '🙈' : '👁️';
+            });
+            wrapper.appendChild(toggleBtn);
+        });
+    };
+
+    // --- END VALIDATION FUNCTIONS ---
+
+    // --- AUTHENTICATION LOGIC ---
+
+    const loginSubmitBtn = document.getElementById('login-submit-btn');
+    const registerSubmitBtn = document.getElementById('register-submit-btn');
+
+    if (loginSubmitBtn) {
+        loginSubmitBtn.onclick = async () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!validateLoginForm(username, password)) {
+                return;
+            }
+
+            const res = await fetch('api.php?action=login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                authContainer.style.display = 'none';
+                mainApp.style.display = 'block';
+                fetchTasks();
+            } else {
+                showToast(data.error || "Login failed", "error");
+            }
+        };
+    }
+
+    if (registerSubmitBtn) {
+        registerSubmitBtn.onclick = async () => {
+            const payload = {
+                lastname: document.getElementById('reg-lastname').value,
+                firstname: document.getElementById('reg-firstname').value,
+                username: document.getElementById('reg-username').value,
+                email: document.getElementById('reg-email').value,
+                password: document.getElementById('reg-password').value,
+                confirm_password: document.getElementById('reg-confirm').value
+            };
+
+            if (!validateRegistrationForm(payload)) {
+                return;
+            }
+
+            const res = await fetch('api.php?action=register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showToast(currentLang === 'fr' ? "Compte créé ! Connectez-vous." : "Account created! Please login.");
+                showLogin();
+            } else {
+                showToast(data.error || "Registration failed", "error");
+            }
+        };
+    }
+
+    window.logout = async () => {
+        await fetch('api.php?action=logout');
+        mainApp.style.display = 'none';
+        authContainer.style.display = 'block';
+        allTasks = [];
+        renderTasks();
+    };
+
+    window.showRegister = () => {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+    };
+
+    window.showLogin = () => {
+        registerForm.style.display = 'none';
+        loginForm.style.display = 'block';
     };
 
     window.toggleLanguage = () => {
@@ -164,6 +382,13 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             // Add a timestamp parameter to avoid browser caching
             const res = await fetch(`api.php?action=list&_=${Date.now()}`);
+            
+            if (res.status === 401) {
+                authContainer.style.display = 'block';
+                mainApp.style.display = 'none';
+                return;
+            }
+
             const data = await res.json();
             
             if (data.error) {
@@ -176,6 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: Number(t.id),
                 is_completed: Number(t.is_completed) === 1
             })) : [];
+
+            authContainer.style.display = 'none';
+            mainApp.style.display = 'block';
             renderTasks();
         } catch (error) {
             console.error("Erreur lors du chargement :", error);
@@ -344,5 +572,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     updateLangToggleButton(); // Apply initial translations
     applyTranslations();
+    initPasswordToggles();
     fetchTasks();
 });
